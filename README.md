@@ -33,11 +33,11 @@ Then make a call (or several simultaneous calls) to reach the above dialplan and
 Sample output:
 ```
 $ node simple.js
-2021-02-07 11:41:05: Listening on port 9999
-2021-02-07 11:41:35: new client arrived
+2021-02-07 12:18:49: Listening on port 9999
+2021-02-07 12:18:57: new client arrived
 {
   method: 'SOURCE',
-  url: '/speech_recog?uuid=b047c2d0-d603-48c1-b2c8-1bd4815828e0',
+  url: '/speech_recog?uuid=dd0993bf-ae11-41ad-a6bd-188f6aedfd49',
   version: { major: 1, minor: 0 },
   headers: {
     host: '192.168.2.138:9999',
@@ -50,16 +50,18 @@ $ node simple.js
     'ice-audio-info': 'bitrate=24000'
   }
 }
-2021-02-07 11:41:35: b047c2d0-d603-48c1-b2c8-1bd4815828e0 MP3 format: {"raw_encoding":208,"sampleRate":8000,"channels":1,"signed":true,"float":false,"ulaw":false,"alaw":false,"bitDepth":16}                     
-2021-02-07 11:41:37: Transcription: Hello.
-2021-02-07 11:41:38: Transcription: Hello.
-2021-02-07 11:41:38: Transcription: Hello,
-2021-02-07 11:41:39: Transcription: Hello, how are you?
-2021-02-07 11:41:42: Transcription:  Hello.
-2021-02-07 11:41:43: Transcription:  Hello.
-2021-02-07 11:41:43: Transcription:  Hello,
-2021-02-07 11:41:44: Transcription:  Hello, how are you?
-2021-02-07 11:41:46: b047c2d0-d603-48c1-b2c8-1bd4815828e0 socket close
+2021-02-07 12:18:57: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 MP3 format: {"raw_encoding":208,"sampleRate":8000,"channels":1,"signed":true,"float":false,"ulaw":false,"alaw":false,"bitDepth":16}                     
+2021-02-07 12:18:59: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 Transcription: Hello.
+2021-02-07 12:19:00: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 Transcription: Hello.
+2021-02-07 12:19:00: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 Transcription: Hello,
+2021-02-07 12:19:01: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 Transcription: Hello, how are you?
+2021-02-07 12:19:03: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 Transcription:  Hello.
+2021-02-07 12:19:05: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 Transcription:  Hello.
+2021-02-07 12:19:05: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 Transcription:  Hello,
+2021-02-07 12:19:06: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 Transcription:  Hello, how are you?
+2021-02-07 12:19:08: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 Transcription:  Hello.
+2021-02-07 12:19:09: dd0993bf-ae11-41ad-a6bd-188f6aedfd49 socket close
+
 ```
 
 
