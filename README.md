@@ -66,6 +66,7 @@ $ node simple.js
 
 
 But of course, you could do things like:
+  - write an outbound event socket IVR app with Speech Recognition support
   - integrate this with an IVR platform like plivo
   - inject speech recognition result into freeswitch event system
   - record audio to file
