@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a node.js showing how to use freeswitch/mod_shout record_session to convert speech to text using Google Speech Recognition.
+This is a simple node.js app showing how to use freeswitch/mod_shout record_session to convert speech to text using Google Speech Recognition.
 
 This is a simple shoutcast server application that will send the audio received to Google Speech Recogntion service and print the result to the shell.
 
