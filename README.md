@@ -28,7 +28,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/credentials_file.json
 node simple.js
 ```
 
-Then make a call to reach the above dialplan and whatever you say will be converted to text and output to the shell.
+Then make a call (or several simultaneous calls) to reach the above dialplan and whatever you say will be converted to text and output to the shell.
 
 Sample output:
 ```

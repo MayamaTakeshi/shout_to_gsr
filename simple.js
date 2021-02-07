@@ -35,7 +35,7 @@ var start_speech_recog = function(uuid, socket, initial_data) {
         log(`${uuid} recognizeStream error ${error}`)
     })
     .on('data', data => {
-        log(`Transcription: ${data.results[0].alternatives[0].transcript}`)
+        log(`${uuid} Transcription: ${data.results[0].alternatives[0].transcript}`)
     })
     .on('close', () => {
         log(`${uuid} recognizeStream close`)
