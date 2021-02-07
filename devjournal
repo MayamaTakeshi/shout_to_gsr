@@ -1,0 +1,15 @@
+================================================================
+2021/02/07 takeshi:
+
+I was thinking in using module http to do the initial connection processing then later get the socket of the connection and process data from it.
+However the node.js http docs say:
+
+  response.socket
+  #
+  Added in: v0.3.0
+  
+      <stream.Duplex>
+
+  Reference to the underlying socket. Usually users will not want to access this property. In particular, the socket will not emit 'readable' events because of how the protocol parser attaches to the socket. After response.end(), the property is nulled.
+
+

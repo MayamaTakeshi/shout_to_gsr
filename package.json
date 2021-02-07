@@ -1,0 +1,25 @@
+{
+  "name": "shout_to_gsr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MayamaTakeshi/shout_to_gsr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MayamaTakeshi/shout_to_gsr/issues"
+  },
+  "homepage": "https://github.com/MayamaTakeshi/shout_to_gsr#readme",
+  "dependencies": {
+    "@google-cloud/speech": "^4.2.0",
+    "http-headers": "^3.0.2",
+    "lame": "git+https://github.com/fusion2004/node-lame.git",
+    "moment": "^2.29.1"
+  }
+}
