@@ -71,3 +71,10 @@ But of course, you could do things like:
   - inject speech recognition result into freeswitch event system
   - record audio to file
 
+## Warning
+
+Note that in the dialplan we are setting: enable_file_write_buffering=false
+This is required to avoid delay when sending data out.
+However, if you start recording the call to a file this must set to true (enable_file_write_buffering=true) otherwise writing to HD will be inefficient. See:
+  https://lists.freeswitch.org/pipermail/freeswitch-users/2009-February/038909.html
+
