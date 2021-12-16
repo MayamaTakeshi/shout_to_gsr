@@ -1,6 +1,8 @@
 const net = require('net')
 var httpHeaders = require('http-headers')
 
+const querystring = require('querystring')
+
 const speech = require('@google-cloud/speech')
 
 const lame = require('lame')
@@ -15,37 +17,42 @@ var log = function(msg) {
 }
 
 var start_speech_recog = function(uuid, socket, initial_data) {
-    const encoding = 'LINEAR16'
-    const sampleRateHertz = 8000
-    const languageCode = 'en-US'
-
-    const request = {
-        config: {
-            encoding: encoding,
-            sampleRateHertz: sampleRateHertz,
-            languageCode: languageCode,
-        },
-        interimResults: true, // If you want interim results, set this to true
-    };
-
-    // Stream the audio to the Google Cloud Speech API
-    var recognizeStream = speech_client
-    .streamingRecognize(request)
-    .on('error', error => {
-        log(`${uuid} recognizeStream error ${error}`)
-    })
-    .on('data', data => {
-        log(`${uuid} Transcription: ${data.results[0].alternatives[0].transcript}`)
-    })
-    .on('close', () => {
-        log(`${uuid} recognizeStream close`)
-    })
-    
-    var decoder = new lame.Decoder();
+    var decoder = new lame.Decoder()
+	var recognizeStream = null
 
     decoder.on('format', (format) => {
         log(`${uuid} MP3 format: ${JSON.stringify(format)}`)
 
+		const encoding = 'LINEAR16'
+		const sampleRateHertz = 8000
+		const languageCode = 'en-US'
+
+		const request = {
+			config: {
+				encoding: encoding,
+				sampleRateHertz: sampleRateHertz,
+				languageCode: languageCode,
+				audioChannelCount: format.channels,
+				enableSeparateRecognitionPerChannel: true,
+			},
+			interimResults: true, // If you want interim results, set this to true
+		};
+
+		// Stream the audio to the Google Cloud Speech API
+		recognizeStream = speech_client.streamingRecognize(request)
+		.on('error', error => {
+			log(`${uuid} recognizeStream error ${error}`)
+		})
+		.on('data', data => {
+		//log(JSON.stringify(data))
+		if(data.results[0].isFinal) {
+				 log(`${uuid} Channel=${data.results[0].channelTag} Transcription: ${data.results[0].alternatives[0].transcript}`)
+			}
+		})
+		.on('close', () => {
+			log(`${uuid} recognizeStream close`)
+		})
+	 
         decoder.pipe(recognizeStream)
     })
 
@@ -62,13 +69,19 @@ var start_speech_recog = function(uuid, socket, initial_data) {
     socket.on('close', () => {
         log(`${uuid} socket close`)
         decoder.unpipe(recognizeStream)
-        recognizeStream.end()
+		if(recognizeStream) {
+        	recognizeStream.end()
+		}
+		recognizeStream = null
     })
 
     socket.on('error', () => {
         log(`${uuid} socket error ${error}`)
         decoder.unpipe(recognizeStream)
-        recognizeStream.end()
+		if(recognizeStream) {
+        	recognizeStream.end()
+		}
+		recognizeStream = null
     })
 }
 
@@ -92,7 +105,10 @@ server.on('connection', socket => {
         console.dir(headers)
         socket.write("HTTP/1.1 200 OK\r\n\r\n")
 
-        var uuid = headers.url.split("=")[1]
+        var params = querystring.parse(headers.url.split("?")[1])
+        //console.log(params)
+        var uuid = params.uuid
+
         var rest = acc.slice(idx+4)
 
         start_speech_recog(uuid, socket, rest)
@@ -103,5 +119,5 @@ server.on('connection', socket => {
 
 const PORT = 9999
 
-server.listen(PORT, () => { log(`Listening on port ${PORT}`) })
+server.listen(PORT, "0.0.0.0", () => { log(`Listening on port ${PORT}`) })
 

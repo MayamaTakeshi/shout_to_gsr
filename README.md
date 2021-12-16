@@ -16,6 +16,8 @@ In your freeswitch dialplan, you will need an extension with actions like these 
   <action application='park'/>
 ```
 
+Obs: the credentials (user:pass) are required by mod_shout to be present in the URL even if the server doesn't check them.
+
 You will also need to obtain a Google application credentials file with Speech Recognition (Speech-To-Text) support enabled.
 
 ## Testing
@@ -81,4 +83,41 @@ However, if you start recording the call to a file this must set to true (enable
 
 See:
   https://lists.freeswitch.org/pipermail/freeswitch-users/2009-February/038909.html
+
+## Using Freeswitch API
+
+Instead of using from the dialplan you can also use the API and send the recording command directly to the channel. Like this:
+```
+uuid_setvar c8b49c20-8407-423a-a2e5-ff71bf14c271 RECORD_STEREO true
+uuid_setvar c8b49c20-8407-423a-a2e5-ff71bf14c271 enable_file_write_buffering false
+uuid_record c8b49c20-8407-423a-a2e5-ff71bf14c271 start http://user:pass@127.0.0.1:9999/transcribe?domain_name=test1.com&uuid=c8b49c20-8407-423a-a2e5-ff71bf14c271
+```
+
+And the result would be like this:
+```
+$ node simple.js
+2021-12-16 16:29:16: Listening on port 9999
+2021-12-16 16:29:21: new client arrived
+{
+  method: 'SOURCE',
+  url: '/transcribe?domain_name=test.com&uuid=c8b49c20-8407-423a-a2e5-ff71bf14c271',                                                                                               
+  version: { major: 1, minor: 0 },
+  headers: {
+    host: '127.0.0.1:9999',
+    'user-agent': 'libshout/2.4.1',
+    'content-type': 'audio/mpeg',
+    'ice-public': '0',
+    'ice-name': 'no name',
+    'ice-url': 'http://www.freeswitch.org',
+    'ice-description': 'FreeSWITCH mod_shout Broadcasting Module',
+    'ice-audio-info': 'bitrate=24000'
+  }
+}
+2021-12-16 16:29:21: c8b49c20-8407-423a-a2e5-ff71bf14c271 MP3 format: {"raw_encoding":208,"sampleRate":8000,"channels":2,"signed":true,"float":false,"ulaw":false,"alaw":false,"bitDepth":16}             
+2021-12-16 16:29:26: c8b49c20-8407-423a-a2e5-ff71bf14c271 Channel=2 Transcription: children live
+2021-12-16 16:29:31: c8b49c20-8407-423a-a2e5-ff71bf14c271 Channel=2 Transcription:  yo so my heart sounds of you                                                                                          
+2021-12-16 16:29:36: c8b49c20-8407-423a-a2e5-ff71bf14c271 Channel=2 Transcription:  Hillsborough live                                                                                                     
+2021-12-16 16:29:43: c8b49c20-8407-423a-a2e5-ff71bf14c271 socket close
+2021-12-16 16:29:44: c8b49c20-8407-423a-a2e5-ff71bf14c271 Channel=1 Transcription: my heart sounds you 
+```
 
