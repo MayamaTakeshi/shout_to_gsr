@@ -5,18 +5,26 @@ const querystring = require('querystring')
 
 const speech = require('@google-cloud/speech')
 
+const OlarisSpeechRecogStream = require('./olaris-speech-recog-stream.js')
+
 const lame = require('lame')
 
 const speech_client = new speech.SpeechClient()
 
 const m = require('moment')
 
+const config = require('config')
+
+const _ = require('lodash')
+
 var log = function(msg) {
     const now = m().format("YYYY-MM-DD HH:mm:ss")
     console.log(`${now}: ${msg}`)
 }
 
-var start_speech_recog = function(uuid, socket, initial_data) {
+const engine = null
+
+var start_speech_recog_for_google = function(uuid, socket, initial_data) {
     var decoder = new lame.Decoder()
 	var recognizeStream = null
 
@@ -86,6 +94,94 @@ var start_speech_recog = function(uuid, socket, initial_data) {
 }
 
 
+var start_speech_recog_for_olaris = function(uuid, socket, initial_data) {
+    var decoder = new lame.Decoder()
+	var stream1 = null
+	var stream2 = null
+
+    decoder.on('format', (format) => {
+        log(`${uuid} MP3 format: ${JSON.stringify(format)}`)
+
+		const context = null
+		const language = 'ja-JP'
+
+		var cfg = _.clone(config.olaris)
+		cfg.src_encoding = 'LINEAR16'
+
+		stream1 = new OlarisSpeechRecogStream(uuid, language, null, cfg)
+		stream1.on('data', data => {
+			console.log(data)
+		})
+		stream1.on('close', () => {
+			log(`${uuid} stream1 close`)
+		})
+	 
+		if(format.channels > 1) {
+			stream2 = new OlarisSpeechRecogStream(uuid, language, null, cfg)
+			stream2.on('data', data => {
+				console.log(data)
+			})
+			stream2.on('close', () => {
+				log(`${uuid} stream2 close`)
+			})
+		}
+
+        decoder.on('data', data => {
+			if(format.channels == 1) {
+				stream1.write(data)
+			} else {
+				var b1 = []
+				var b2 = []
+				for(var i=0 ; i<data.length/2 ; i++) {
+					b1[i] = data[i*2]
+					b1[i+1] = data[i*2+1]
+
+					b2[i] = data[i*2+2]
+					b2[i+1] = data[i*2+1+2]
+				}
+
+				stream1.write(data)
+				stream2.write(data)
+			}
+		})
+    })
+
+    //decoder.on('data', data => log(`${uuid} MP3 data`))
+
+    if(initial_data != "") {
+        decoder.write(Buffer.from(initial_data))
+    }
+
+    socket.pipe(decoder)
+
+    //socket.on('data', data => log(`${uuid} socket data length=${data.length}`))
+
+    socket.on('close', () => {
+        log(`${uuid} socket close`)
+		if(stream1) {
+        	stream1.end()
+		}
+		stream1 = null
+		if(stream2) {
+        	stream2.end()
+		}
+		stream2 = null
+    })
+
+    socket.on('error', () => {
+        log(`${uuid} socket error ${error}`)
+		if(stream1) {
+        	stream1.end()
+		}
+		stream1 = null
+		if(stream2) {
+        	stream2.end()
+		}
+		stream2 = null
+    })
+}
+
+
 const server = net.createServer()
 server.on('connection', socket => {
     log('new client arrived')
@@ -111,7 +207,11 @@ server.on('connection', socket => {
 
         var rest = acc.slice(idx+4)
 
-        start_speech_recog(uuid, socket, rest)
+		if(engine == 'google') {
+        	start_speech_recog_for_google(uuid, socket, rest)
+		} else {
+        	start_speech_recog_for_olaris(uuid, socket, rest)
+		}
     } 
  
     socket.once('data', handshake)
