@@ -24,9 +24,10 @@
     "config": "^3.3.6",
     "http-headers": "^3.0.2",
     "lame": "git+https://github.com/fusion2004/node-lame.git",
-    "moment": "^2.29.1",
     "lodash": "^4.17.21",
+    "moment": "^2.29.1",
     "request-promise": "^4.2.6",
+    "wav": "^1.0.2",
     "ws": "^8.3.0"
   }
 }

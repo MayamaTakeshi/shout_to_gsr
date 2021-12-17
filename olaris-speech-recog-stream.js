@@ -78,7 +78,7 @@ class OlarisSpeechRecogStream extends Writable {
                 let msg = {
                     access_token: accessToken,
                     type: 'start',
-                    sampling_rate: 8000,
+                    sampling_rate: config.sampling_rate,
                     product_name: config.product_name,
                     organization_id: config.organization_id,
                     model_alias: 'model_batoner_japanese',
@@ -136,8 +136,6 @@ class OlarisSpeechRecogStream extends Writable {
 			console.log("not ready")	
 			callback()
 			return true
-		} else {
-			console.log("ready")	
 		}
 
         var buf
@@ -166,7 +164,7 @@ class OlarisSpeechRecogStream extends Writable {
             type: 'streamAudio',
             stream: bufferArray
         }
-        console.log(bufferArray)
+        //console.log(bufferArray)
         this.ws.send(JSON.stringify(msg))
 
         callback()
@@ -176,6 +174,8 @@ class OlarisSpeechRecogStream extends Writable {
 
     _final(callback) {
         log(__line, 'info', this.uuid, '_final')
+
+        this.ready = false
 
         this.eventEmitter.removeAllListeners()
         if(this.ws) {

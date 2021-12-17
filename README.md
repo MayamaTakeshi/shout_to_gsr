@@ -1,12 +1,21 @@
-# shout_to_gsr (shoutcast to Google Speech Recognition)
+# shout_to_gsr
+
+Shoutcast to Google/Olaris Speech Recognition (gsr means Google Speech Recognition).
+We added support for Olaris later.
+
+## UPDATE
+
+I don't recommend using mod_shout for transcription/speechrecog of low quality audio calls. 
+This is because there will be audio degradation due transcoding to/from mp3 and calls using PCMU, PCMA etc will not produce good results.
+I recommend to use mod_oreka or mod_audio_fork instead.
 
 ## Overview
 
-This is a simple node.js app showing how to use freeswitch/mod_shout record_session to convert speech to text using Google Speech Recognition.
+This is a simple node.js app showing how to use freeswitch/mod_shout record_session to convert speech to text using Google/Olaris Speech Recognition.
 
-This is a simple shoutcast server application that will send the audio received to Google Speech Recogntion service and print the result to the shell.
+This is a simple shoutcast server application that will send the audio received to Google/Olaris Speech Recogntion service and print the result to the shell.
 
-## Configuration
+## Configuration of freeswitch
 
 In your freeswitch dialplan, you will need an extension with actions like these (adjust SHOUT_TO_GSR_IP_ADDRESS)
 ```
@@ -18,7 +27,13 @@ In your freeswitch dialplan, you will need an extension with actions like these 
 
 Obs: the credentials (user:pass) are required by mod_shout to be present in the URL even if the server doesn't check them.
 
-You will also need to obtain a Google application credentials file with Speech Recognition (Speech-To-Text) support enabled.
+You will also need to obtain a Google application credentials file with Speech Recognition (Speech-To-Text) support enabled and/or Olaris API credentials.
+
+## Configuration of the app
+```
+cp config/default.js.sample config/default.js
+vim config/default.js # adjust as necessary
+```
 
 ## Testing
 
@@ -120,4 +135,19 @@ $ node simple.js
 2021-12-16 16:29:43: c8b49c20-8407-423a-a2e5-ff71bf14c271 socket close
 2021-12-16 16:29:44: c8b49c20-8407-423a-a2e5-ff71bf14c271 Channel=1 Transcription: my heart sounds you 
 ```
+
+## Specifying engine and language
+
+In the config/default.js file you can specify default_engine ("google" or "olaris") and default_language ("en-US", "ja-JP" etc. But for olaris, this is irrelevant as it only works with Japanese).
+But you can specify them as parameters in the application record_session shout URL like this:
+```
+  <action application='record_session' data='shout://user:pass@SHOUT_TO_GSR_IP_ADDRESS:9999/speech_recog?uuid=${uuid}&engine=google&language=en-US"'/>
+```
+or in the freeswitch API uuid_record:
+```
+uuid_record c8b49c20-8407-423a-a2e5-ff71bf14c271 start http://user:pass@127.0.0.1:9999/transcribe?domain_name=test1.com&uuid=c8b49c20-8407-423a-a2e5-ff71bf14c271&engine=olaris
+```
+## Dumping audio to files
+
+If audio_dump_folder in config/default.js is set, the app will dump audio to files into it.
 
