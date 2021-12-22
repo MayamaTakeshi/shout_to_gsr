@@ -26,6 +26,7 @@
     "lame": "git+https://github.com/fusion2004/node-lame.git",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+    "olaris-speech-recog-stream": "^1.4.0",
     "request-promise": "^4.2.6",
     "wav": "^1.0.2",
     "ws": "^8.3.0"

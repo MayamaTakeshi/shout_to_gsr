@@ -5,7 +5,7 @@ const querystring = require('querystring')
 
 const speech = require('@google-cloud/speech')
 
-const OlarisSpeechRecogStream = require('./olaris-speech-recog-stream.js')
+const OlarisSpeechRecogStream = require('olaris-speech-recog-stream')
 
 const lame = require('lame')
 
@@ -179,7 +179,7 @@ var start_speech_recog_for_olaris = function(uuid, language, socket, initial_dat
 			} else {
 				var a1 = []
 				var a2 = []
-				for(var i=0 ; i<data.length/2 ; i++) {
+				for(var i=0 ; i<data.length/2 ; i+=2) {
 					a1[i*2] = data[i*2]
 					a1[i*2+1] = data[i*2+1]
 
@@ -305,7 +305,7 @@ server.on('connection', socket => {
     socket.once('data', handshake)
 })
 
-const PORT = 9999
+const PORT = 8090
 
 server.listen(PORT, "0.0.0.0", () => { log(`Listening on port ${PORT}`) })
 

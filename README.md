@@ -21,7 +21,7 @@ In your freeswitch dialplan, you will need an extension with actions like these 
 ```
   <action application='set' data='enable_file_write_buffering=false'/>
   <action application='answer'/>
-  <action application='record_session' data='shout://user:pass@SHOUT_TO_GSR_IP_ADDRESS:9999/speech_recog?uuid=${uuid}'/>
+  <action application='record_session' data='shout://user:pass@SHOUT_TO_GSR_IP_ADDRESS:8090/speech_recog?uuid=${uuid}'/>
   <action application='park'/>
 ```
 
@@ -50,14 +50,14 @@ Then make a call (or several simultaneous calls) to reach the above dialplan and
 Sample output:
 ```
 $ node simple.js
-2021-02-07 12:18:49: Listening on port 9999
+2021-02-07 12:18:49: Listening on port 8090
 2021-02-07 12:18:57: new client arrived
 {
   method: 'SOURCE',
   url: '/speech_recog?uuid=dd0993bf-ae11-41ad-a6bd-188f6aedfd49',
   version: { major: 1, minor: 0 },
   headers: {
-    host: '192.168.2.138:9999',
+    host: '192.168.2.138:8090',
     'user-agent': 'libshout/2.4.1',
     'content-type': 'audio/mpeg',
     'ice-public': '0',
@@ -105,20 +105,20 @@ Instead of using from the dialplan you can also use the API and send the recordi
 ```
 uuid_setvar c8b49c20-8407-423a-a2e5-ff71bf14c271 RECORD_STEREO true
 uuid_setvar c8b49c20-8407-423a-a2e5-ff71bf14c271 enable_file_write_buffering false
-uuid_record c8b49c20-8407-423a-a2e5-ff71bf14c271 start http://user:pass@127.0.0.1:9999/transcribe?domain_name=test1.com&uuid=c8b49c20-8407-423a-a2e5-ff71bf14c271
+uuid_record c8b49c20-8407-423a-a2e5-ff71bf14c271 start http://user:pass@127.0.0.1:8090/transcribe?domain_name=test1.com&uuid=c8b49c20-8407-423a-a2e5-ff71bf14c271
 ```
 
 And the result would be like this:
 ```
 $ node simple.js
-2021-12-16 16:29:16: Listening on port 9999
+2021-12-16 16:29:16: Listening on port 8090
 2021-12-16 16:29:21: new client arrived
 {
   method: 'SOURCE',
   url: '/transcribe?domain_name=test.com&uuid=c8b49c20-8407-423a-a2e5-ff71bf14c271',                                                                                               
   version: { major: 1, minor: 0 },
   headers: {
-    host: '127.0.0.1:9999',
+    host: '127.0.0.1:8090',
     'user-agent': 'libshout/2.4.1',
     'content-type': 'audio/mpeg',
     'ice-public': '0',
@@ -141,11 +141,11 @@ $ node simple.js
 In the config/default.js file you can specify default_engine ("google" or "olaris") and default_language ("en-US", "ja-JP" etc. But for olaris, this is irrelevant as it only works with Japanese).
 But you can specify them as parameters in the application record_session shout URL like this:
 ```
-  <action application='record_session' data='shout://user:pass@SHOUT_TO_GSR_IP_ADDRESS:9999/speech_recog?uuid=${uuid}&engine=google&language=en-US"'/>
+  <action application='record_session' data='shout://user:pass@SHOUT_TO_GSR_IP_ADDRESS:8090/speech_recog?uuid=${uuid}&engine=google&language=en-US"'/>
 ```
 or in the freeswitch API uuid_record:
 ```
-uuid_record c8b49c20-8407-423a-a2e5-ff71bf14c271 start http://user:pass@127.0.0.1:9999/transcribe?domain_name=test1.com&uuid=c8b49c20-8407-423a-a2e5-ff71bf14c271&engine=olaris
+uuid_record c8b49c20-8407-423a-a2e5-ff71bf14c271 start http://user:pass@127.0.0.1:8090/transcribe?domain_name=test1.com&uuid=c8b49c20-8407-423a-a2e5-ff71bf14c271&engine=olaris
 ```
 ## Dumping audio to files
 
